@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PointEntries } from './interfaces/points.interface';
-import { HtmlService } from 'src/shared/infrastructure/html/html.service';
+import { HtmlService } from '../shared/infrastructure/html/html.service';
 import { Observable } from 'rxjs';
 
 @Injectable()
