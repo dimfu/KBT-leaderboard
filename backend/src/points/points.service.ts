@@ -12,40 +12,39 @@ import {
 
 @Injectable()
 export class PointsService {
-  private pointEntries: PointEntries = [];
-  private readonly pointsUrl = `${process.env.TU_URL}/timing/points?page={page}&month=0`;
+  private readonly pointsUrl = `${process.env.TU_URL}/timing/points?page={page}&month={month}`;
 
-  constructor(private readonly collector: CollectorService) {
-    this.pointEntries = [];
-  }
+  constructor(private readonly collector: CollectorService) {}
 
-  getPage(page: number) {
-    const pageRegex = /{page}/g;
-    const urlWithPage = this.pointsUrl.replace(pageRegex, page.toString());
-    const html = this.collector.fetchHtmlContent(urlWithPage);
+  getPage(page: number, currentMonth: number) {
+    const url = this.pointsUrl
+      .replace(/{page}/g, page.toString())
+      .replace(/{month}/g, currentMonth.toString());
+    const html = this.collector.fetchHtmlContent(url);
 
     return html.pipe(
       map((html: string) => this.collector.extractPointsTable(html)),
     );
   }
 
-  getPointPerPage(page: number) {
-    return this.getPage(page);
+  getPointPerPage(page: number, currentMonth: number) {
+    return this.getPage(page, currentMonth);
   }
 
-  getAllPoints() {
+  getAllPoints(currentMonth: number) {
     let currentPage = 0;
     let isNotEmpty = true;
 
     return new Observable<PointEntries>((observer) => {
+      const pointEntries: PointEntries = [];
       const processNextPage = () => {
-        const htmlObservable = this.getPage(currentPage);
+        const htmlObservable = this.getPage(currentPage, currentMonth);
 
         htmlObservable
           .pipe(
             concatMap((data: PointEntries) => {
               if (data.length > 0) {
-                this.pointEntries.push(...data);
+                pointEntries.push(...data);
                 currentPage++;
                 return scheduled(data, asyncScheduler);
               } else {
@@ -59,7 +58,7 @@ export class PointsService {
               if (isNotEmpty) {
                 processNextPage();
               } else {
-                observer.next(this.pointEntries);
+                observer.next(pointEntries);
                 observer.complete();
               }
             },
