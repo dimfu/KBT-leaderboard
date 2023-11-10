@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PointsController } from './points.controller';
 import { PointsService } from './points.service';
-import { HtmlService } from '../shared/infrastructure/html/html.service';
+import { CollectorService } from '../shared/infrastructure/collector/collector.service';
 
 @Module({
-  providers: [HtmlService, PointsService],
+  providers: [CollectorService, PointsService],
   controllers: [PointsController],
 })
 export class PointsModule {}
