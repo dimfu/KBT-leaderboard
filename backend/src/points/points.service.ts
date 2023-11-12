@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PointEntries } from './interfaces/points.interface';
+import { PointEntries } from './points.interface';
 import { CollectorService } from '../shared/infrastructure/collector/collector.service';
 import {
   EMPTY,

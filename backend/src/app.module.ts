@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { LeaderboardsController } from './leaderboards/leaderboards.controller';
 import { PointsModule } from './points/points.module';
 import { ConfigModule } from '@nestjs/config';
+import { RaceChallengeModule } from './racechallenge/racechallenge.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath: '.env',
     }),
     PointsModule,
+    RaceChallengeModule,
   ],
   controllers: [AppController, LeaderboardsController],
   providers: [AppService],

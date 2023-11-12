@@ -13,27 +13,27 @@ export class PointsController {
   ): Promise<void> {
     this.pointService.getAllPoints(currentMonth).subscribe({
       next(data) {
-        res.status(200).json(data);
+        return res.status(200).json(data);
       },
       error(error) {
-        res.status(500).json({ error });
+        return res.status(500).json({ error });
       },
     });
   }
 
   @Get('page/:num')
   async getPointPerPage(
-    @Param() params: any,
+    @Param('num') num: number,
     @Query('currentMonth') currentMonth = 0,
     @Res() res: Response,
   ): Promise<void> {
-    this.pointService.getPointPerPage(params.num, currentMonth).subscribe({
+    this.pointService.getPointPerPage(num, currentMonth).subscribe({
       next(data) {
-        res.status(200).json(data);
+        return res.status(200).json(data);
       },
       error(error) {
         console.error(error);
-        res.status(500).json({ error });
+        return res.status(500).json({ error });
       },
     });
   }

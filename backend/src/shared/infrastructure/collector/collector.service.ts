@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { Observable, catchError, from, map } from 'rxjs';
-import { PointEntries } from '../../../points/interfaces/points.interface';
+import { PointEntries } from '../../../points/points.interface';
+import { RaceChallengeEntries } from '../../../racechallenge/racechallenge.interface';
 
 @Injectable()
 export class CollectorService {
@@ -31,6 +32,22 @@ export class CollectorService {
         const points = parseInt($(tds[2]).text());
 
         return { rank, name, points };
+      })
+      .get();
+
+    return result;
+  }
+
+  extractRaceChallengeTable(html: string): RaceChallengeEntries {
+    const $ = cheerio.load(html);
+    const result = $('table > tbody > tr')
+      .map((_, row) => {
+        const tds = $(row).find('td');
+        const rank = parseInt($(tds[0]).text());
+        const name = $(tds[1]).text();
+        const rating = parseInt($(tds[2]).text());
+
+        return { rank, name, rating };
       })
       .get();
 
