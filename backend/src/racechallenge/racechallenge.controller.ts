@@ -4,11 +4,15 @@ import { RaceChallengeService } from './racechallenge.service';
 
 @Controller('racechallenge')
 export class RaceChallengeController {
-  constructor(private readonly challengeService: RaceChallengeService) {}
+  private leaderboardList: { [key: string]: string } = {};
+
+  constructor(private readonly challengeService: RaceChallengeService) {
+    this.leaderboardList = this.challengeService.findAll();
+  }
 
   @Get()
   getLeaderboardList(@Res() res: Response) {
-    res.status(200).json(this.challengeService.findAll());
+    res.status(200).json(Object.keys(this.leaderboardList));
   }
 
   @Get(':leaderboard')
@@ -19,6 +23,9 @@ export class RaceChallengeController {
     if (!this.challengeService.isLeaderboardExist(leaderboard, res)) {
       return;
     }
+
+    leaderboard = this.leaderboardList[leaderboard];
+
     this.challengeService.getAllCurrentLeaderboard(leaderboard).subscribe({
       next(value) {
         return res.status(200).json(value);
@@ -34,17 +41,23 @@ export class RaceChallengeController {
     @Res() res: Response,
     @Param() params: { leaderboard: string; page: number },
   ) {
-    const { leaderboard, page } = params;
+    let { leaderboard } = params;
+
     if (!this.challengeService.isLeaderboardExist(leaderboard, res)) {
       return;
     }
-    this.challengeService.getCurrentLeaderboard(leaderboard, page).subscribe({
-      next(value) {
-        return res.status(200).json(value);
-      },
-      error(error) {
-        res.status(500).json({ error });
-      },
-    });
+
+    leaderboard = this.leaderboardList[leaderboard];
+
+    this.challengeService
+      .getCurrentLeaderboard(leaderboard, params.page)
+      .subscribe({
+        next(value) {
+          return res.status(200).json(value);
+        },
+        error(error) {
+          res.status(500).json({ error });
+        },
+      });
   }
 }
