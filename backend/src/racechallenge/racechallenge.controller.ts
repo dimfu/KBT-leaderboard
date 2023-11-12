@@ -7,7 +7,7 @@ export class RaceChallengeController {
   private leaderboardList: { [key: string]: string } = {};
 
   constructor(private readonly challengeService: RaceChallengeService) {
-    this.leaderboardList = this.challengeService.findAll();
+    this.leaderboardList = this.challengeService.getAllLeaderboard();
   }
 
   @Get()
@@ -20,6 +20,8 @@ export class RaceChallengeController {
     @Res() res: Response,
     @Param('leaderboard') leaderboard: string,
   ) {
+    leaderboard = leaderboard.toLowerCase();
+
     if (!this.challengeService.isLeaderboardExist(leaderboard, res)) {
       return;
     }
@@ -42,6 +44,8 @@ export class RaceChallengeController {
     @Param() params: { leaderboard: string; page: number },
   ) {
     let { leaderboard } = params;
+
+    leaderboard = leaderboard.toLowerCase();
 
     if (!this.challengeService.isLeaderboardExist(leaderboard, res)) {
       return;

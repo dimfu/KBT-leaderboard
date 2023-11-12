@@ -17,37 +17,33 @@ export class RaceChallengeService {
 
   private readonly challengeUrl = `${process.env.TU_URL}/racechallenge?leaderboard={leaderboard}&page={page}`;
   private leaderboardList = {
-    ennaSkyline: 'Enna Skyline',
-    hakoneNanamagari: 'Hakone Nanamagari',
-    hakoneTurnpike: 'Hakone Turnpike',
+    ennaskyline: 'Enna Skyline',
+    hakonenanamagari: 'Hakone Nanamagari',
+    hakoneturnpike: 'Hakone Turnpike',
     happogahara: 'Happogahara',
     irohazaka: 'Irohazaka',
-    mazePass: 'Maze Pass',
-    momijiLine: 'Momiji Line',
-    mtAkagi: 'Mt Akagi',
-    mtAkina: 'Mt Akina',
-    mtMyogi: 'Mt Myogi',
-    mtTsukubaFruitsLine: 'Mt Tsukuba Fruits Line',
-    mtTsukubaSnow: 'Mt Tsukuba Snow',
+    mazepass: 'Maze Pass',
+    momijiline: 'Momiji Line',
+    mtakagi: 'Mt Akagi',
+    mtakina: 'Mt Akina',
+    mtmyogi: 'Mt Myogi',
+    mttsukubafruitsline: 'Mt Tsukuba Fruits Line',
+    mttsukubasnow: 'Mt Tsukuba Snow',
     nagao: 'Nagao',
-    sadaminePass: 'Sadamine Pass',
-    shomaruPass: 'Shomaru Pass',
-    tsubakiLine: 'Tsubaki Line',
+    sadaminepass: 'Sadamine Pass',
+    shomarupass: 'Shomaru Pass',
+    tsubakiline: 'Tsubaki Line',
     tsuchisaka: 'Tsuchisaka',
-    usuiPass: 'Usui Pass',
+    usuipass: 'Usui Pass',
   };
 
-  public findAll() {
+  public getAllLeaderboard() {
     return this.leaderboardList;
   }
 
-  public leaderboardIncludes(leaderboard: string): boolean {
-    const leaderboardKeys = Object.keys(this.leaderboardList);
-    return leaderboardKeys.includes(leaderboard);
-  }
-
   public isLeaderboardExist(leaderboard: string, res: Response) {
-    if (!this.leaderboardIncludes(leaderboard)) {
+    const leaderboardKeys = Object.keys(this.leaderboardList);
+    if (!leaderboardKeys.includes(leaderboard)) {
       res.status(404).json({
         error:
           'Leaderboard not found, see /racechallenge to see leaderboard list',

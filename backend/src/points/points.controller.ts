@@ -7,11 +7,30 @@ export class PointsController {
   constructor(private pointService: PointsService) {}
 
   @Get()
+  getAllLeaderboard(@Res() res: Response) {
+    return res.status(200).json(this.pointService.getAllLeaderboard());
+  }
+
+  @Get(':leaderboard')
   async getAllPoints(
+    @Param('leaderboard') leaderboard: string,
     @Res() res: Response,
     @Query('currentMonth') currentMonth = 0,
   ): Promise<void> {
-    this.pointService.getAllPoints(currentMonth).subscribe({
+    leaderboard = this.pointService.caplitalizeLeaderboard(
+      leaderboard.toLowerCase(),
+    );
+
+    if (!this.pointService.isLeaderboardExist(leaderboard, res)) {
+      return;
+    }
+
+    // set leaderboard to empty string to get all leaderboard points
+    if (leaderboard === 'All') {
+      leaderboard = '';
+    }
+
+    this.pointService.getAllPoints(currentMonth, leaderboard).subscribe({
       next(data) {
         return res.status(200).json(data);
       },
@@ -21,20 +40,36 @@ export class PointsController {
     });
   }
 
-  @Get('page/:num')
+  @Get(':leaderboard/:num')
   async getPointPerPage(
-    @Param('num') num: number,
+    @Param() params: { leaderboard: string; num: number },
     @Query('currentMonth') currentMonth = 0,
     @Res() res: Response,
   ): Promise<void> {
-    this.pointService.getPointPerPage(num, currentMonth).subscribe({
-      next(data) {
-        return res.status(200).json(data);
-      },
-      error(error) {
-        console.error(error);
-        return res.status(500).json({ error });
-      },
-    });
+    let { leaderboard } = params;
+
+    leaderboard = this.pointService.caplitalizeLeaderboard(
+      leaderboard.toLowerCase(),
+    );
+
+    if (!this.pointService.isLeaderboardExist(leaderboard, res)) {
+      return;
+    }
+
+    if (leaderboard === 'All') {
+      leaderboard = '';
+    }
+
+    this.pointService
+      .getPointPerPage(params.num, currentMonth, leaderboard)
+      .subscribe({
+        next(data) {
+          return res.status(200).json(data);
+        },
+        error(error) {
+          console.error(error);
+          return res.status(500).json({ error });
+        },
+      });
   }
 }
