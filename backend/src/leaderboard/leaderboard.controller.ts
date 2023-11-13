@@ -1,27 +1,27 @@
 import { Controller, Get, Param, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { PointsService } from './points.service';
+import { LeaderboardService } from './leaderboard.service';
 
-@Controller('points')
-export class PointsController {
-  constructor(private pointService: PointsService) {}
+@Controller('leaderboard')
+export class LeaderboardController {
+  constructor(private leaderboardService: LeaderboardService) {}
 
-  @Get()
+  @Get('points')
   getAllLeaderboard(@Res() res: Response) {
-    return res.status(200).json(this.pointService.getAllLeaderboard());
+    return res.status(200).json(this.leaderboardService.getAllLeaderboard());
   }
 
-  @Get(':leaderboard')
+  @Get('points/:leaderboard')
   async getAllPoints(
     @Param('leaderboard') leaderboard: string,
     @Res() res: Response,
     @Query('currentMonth') currentMonth = 0,
   ): Promise<void> {
-    leaderboard = this.pointService.caplitalizeLeaderboard(
+    leaderboard = this.leaderboardService.caplitalizeLeaderboard(
       leaderboard.toLowerCase(),
     );
 
-    if (!this.pointService.isLeaderboardExist(leaderboard, res)) {
+    if (!this.leaderboardService.isLeaderboardExist(leaderboard, res)) {
       return;
     }
 
@@ -30,7 +30,7 @@ export class PointsController {
       leaderboard = '';
     }
 
-    this.pointService.getAllPoints(currentMonth, leaderboard).subscribe({
+    this.leaderboardService.getAllPoints(currentMonth, leaderboard).subscribe({
       next(data) {
         return res.status(200).json(data);
       },
@@ -40,7 +40,7 @@ export class PointsController {
     });
   }
 
-  @Get(':leaderboard/:num')
+  @Get('points/:leaderboard/:num')
   async getPointPerPage(
     @Param() params: { leaderboard: string; num: number },
     @Query('currentMonth') currentMonth = 0,
@@ -48,11 +48,11 @@ export class PointsController {
   ): Promise<void> {
     let { leaderboard } = params;
 
-    leaderboard = this.pointService.caplitalizeLeaderboard(
+    leaderboard = this.leaderboardService.caplitalizeLeaderboard(
       leaderboard.toLowerCase(),
     );
 
-    if (!this.pointService.isLeaderboardExist(leaderboard, res)) {
+    if (!this.leaderboardService.isLeaderboardExist(leaderboard, res)) {
       return;
     }
 
@@ -60,7 +60,7 @@ export class PointsController {
       leaderboard = '';
     }
 
-    this.pointService
+    this.leaderboardService
       .getPointPerPage(params.num, currentMonth, leaderboard)
       .subscribe({
         next(data) {

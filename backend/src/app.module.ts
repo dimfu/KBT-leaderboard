@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { LeaderboardsController } from './leaderboards/leaderboards.controller';
-import { PointsModule } from './points/points.module';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { ConfigModule } from '@nestjs/config';
 import { RaceChallengeModule } from './racechallenge/racechallenge.module';
 
@@ -11,10 +10,10 @@ import { RaceChallengeModule } from './racechallenge/racechallenge.module';
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
-    PointsModule,
+    LeaderboardModule,
     RaceChallengeModule,
   ],
-  controllers: [AppController, LeaderboardsController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

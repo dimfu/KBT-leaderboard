@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { Observable, catchError, from, map } from 'rxjs';
-import { PointEntries } from '../../../points/points.interface';
+import { PointEntries } from '../../../leaderboard/leaderboard.interface';
 import { RaceChallengeEntries } from '../../../racechallenge/racechallenge.interface';
 
 @Injectable()

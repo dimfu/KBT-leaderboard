@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PointEntries } from './points.interface';
+import { PointEntries } from './leaderboard.interface';
 import { CollectorService } from '../shared/infrastructure/collector/collector.service';
 import {
   EMPTY,
@@ -12,8 +12,9 @@ import {
 import { Response } from 'express';
 
 @Injectable()
-export class PointsService {
+export class LeaderboardService {
   private readonly pointsUrl = `${process.env.TU_URL}/timing/points?page={page}&month={month}&leaderboard={leaderboard}`;
+
   private leaderboardList = [
     'All',
     'Gunma',
