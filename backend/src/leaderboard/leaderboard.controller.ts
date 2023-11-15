@@ -11,13 +11,33 @@ export class LeaderboardController {
     return res.status(200).json(this.leaderboardService.getAllLeaderboard());
   }
 
+  @Get('timing/:leaderboard')
+  getLeaderboardTracks(
+    @Param('leaderboard') leaderboard: string,
+    @Res() res: Response,
+  ) {
+    leaderboard = this.leaderboardService.capitalizeLeaderboard(
+      leaderboard.toLowerCase(),
+    );
+
+    if (!this.leaderboardService.isLeaderboardExist(leaderboard, res)) {
+      return;
+    }
+
+    if (leaderboard === 'All') {
+      return res
+        .status(404)
+        .json({ error: 'leaderboard `all` cant be used in timing' });
+    }
+  }
+
   @Get('points/:leaderboard')
   async getAllPoints(
     @Param('leaderboard') leaderboard: string,
     @Res() res: Response,
     @Query('currentMonth') currentMonth = 0,
   ): Promise<void> {
-    leaderboard = this.leaderboardService.caplitalizeLeaderboard(
+    leaderboard = this.leaderboardService.capitalizeLeaderboard(
       leaderboard.toLowerCase(),
     );
 
@@ -47,7 +67,7 @@ export class LeaderboardController {
     query: { currentMonth: number; stage: string; car: string },
     @Res() res: Response,
   ): Promise<void> {
-    params.leaderboard = this.leaderboardService.caplitalizeLeaderboard(
+    params.leaderboard = this.leaderboardService.capitalizeLeaderboard(
       params.leaderboard.toLowerCase(),
     );
 
@@ -81,7 +101,7 @@ export class LeaderboardController {
   ): Promise<void> {
     let { leaderboard } = params;
 
-    leaderboard = this.leaderboardService.caplitalizeLeaderboard(
+    leaderboard = this.leaderboardService.capitalizeLeaderboard(
       leaderboard.toLowerCase(),
     );
 
@@ -119,7 +139,7 @@ export class LeaderboardController {
 
     let { leaderboard } = params;
 
-    leaderboard = this.leaderboardService.caplitalizeLeaderboard(
+    leaderboard = this.leaderboardService.capitalizeLeaderboard(
       leaderboard.toLowerCase(),
     );
 

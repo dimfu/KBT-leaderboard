@@ -8,7 +8,7 @@ import {
   TimingParamsWithoutPage,
   UrlParams,
 } from './leaderboard.interface';
-import { CollectorService } from '../shared/infrastructure/collector/collector.service';
+import { CollectorService } from '../collector/collector.service';
 import {
   EMPTY,
   Observable,
@@ -18,26 +18,20 @@ import {
   scheduled,
 } from 'rxjs';
 import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class LeaderboardService {
-  private readonly pointsUrl = `${process.env.TU_URL}/timing/points?page={page}&month={month}&leaderboard={leaderboard}`;
-  private readonly timingdUrl = `${process.env.TU_URL}/timing?leaderboard={leaderboard}&track={track}&car={car}&month={month}&stage={stage}&page={page}`;
-
-  private leaderboardList = [
-    'All',
-    'Gunma',
-    'Ibaraki',
-    'Kanagawa',
-    'Saitama',
-    'Shizuoka',
-    'Tochigi',
-  ];
-
-  constructor(private readonly collector: CollectorService) {}
+  private config: Record<string, any>;
+  constructor(
+    private readonly collector: CollectorService,
+    private configService: ConfigService,
+  ) {
+    this.config = this.configService.get<Record<string, any>>('leaderboard');
+  }
 
   getAllLeaderboard() {
-    return this.leaderboardList;
+    return this.config.leaderboardList;
   }
 
   getPage(category: LeaderboardCategories, params: UrlParams) {
@@ -69,7 +63,7 @@ export class LeaderboardService {
     switch (category) {
       case 'timing':
         if (hasTimingParams(params)) {
-          url = this.replacePlaceholder(this.timingdUrl, {
+          url = this.replacePlaceholder(this.config.timingUrl, {
             page,
             month: month ?? 0,
             car: params.car ?? '',
@@ -77,11 +71,10 @@ export class LeaderboardService {
             track: params.track,
             leaderboard,
           });
-          console.log(url);
         }
         break;
       case 'points':
-        url = this.replacePlaceholder(this.pointsUrl, {
+        url = this.replacePlaceholder(this.config.pointsUrl, {
           page,
           month,
           leaderboard,
@@ -110,14 +103,15 @@ export class LeaderboardService {
     return updatedUrl;
   }
 
-  public caplitalizeLeaderboard(leaderboard: string) {
+  public capitalizeLeaderboard(leaderboard: string) {
     return leaderboard.replace(/^.{1}/g, leaderboard[0].toUpperCase());
   }
 
   public isLeaderboardExist(leaderboard: string, res: Response) {
-    if (!this.leaderboardList.includes(leaderboard)) {
+    if (!this.config.leaderboardList.includes(leaderboard)) {
       res.status(404).json({
-        error: 'Leaderboard not found, see /points to see leaderboard list',
+        error:
+          'Leaderboard not found, see /leaderboard to see leaderboard list',
       });
       return false;
     }

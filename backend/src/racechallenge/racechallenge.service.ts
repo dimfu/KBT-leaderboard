@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CollectorService } from '../shared/infrastructure/collector/collector.service';
+import { CollectorService } from '../collector/collector.service';
 import {
   EMPTY,
   Observable,

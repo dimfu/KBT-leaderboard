@@ -5,8 +5,8 @@ import { Observable, catchError, from, map } from 'rxjs';
 import {
   PointEntries,
   TimingEntries,
-} from '../../../leaderboard/leaderboard.interface';
-import { RaceChallengeEntries } from '../../../racechallenge/racechallenge.interface';
+} from '../leaderboard/leaderboard.interface';
+import { RaceChallengeEntries } from '../racechallenge/racechallenge.interface';
 
 @Injectable()
 export class CollectorService {
