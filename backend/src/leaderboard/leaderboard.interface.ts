@@ -1,7 +1,9 @@
+import { Subscriber } from 'rxjs';
+
 export type LeaderboardCategories = 'points' | 'timing';
 
 export interface PointParams {
-  page: number;
+  page?: number;
   currentMonth: number;
   leaderboard: string;
 }
@@ -11,8 +13,6 @@ export interface TimingParams extends PointParams {
   car?: string;
   stage: string;
 }
-
-export type TimingParamsWithoutPage = Omit<TimingParams, 'page'>;
 
 export type UrlParams = PointParams | TimingParams;
 
@@ -33,3 +33,13 @@ export interface Timing {
 }
 
 export type TimingEntries = Timing[];
+
+export interface ProcessNextPage<T extends any[]> {
+  currentMonth: number;
+  params: TimingParams | PointParams;
+  category: LeaderboardCategories;
+  entries: T;
+  isNotEmpty: boolean;
+  observer: Subscriber<T>;
+  currentPage: number;
+}

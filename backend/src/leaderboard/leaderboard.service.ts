@@ -1,11 +1,12 @@
+/* eslint-disable prefer-const */
 import { Injectable } from '@nestjs/common';
 import {
   LeaderboardCategories,
   PointEntries,
   PointParams,
+  ProcessNextPage,
   TimingEntries,
   TimingParams,
-  TimingParamsWithoutPage,
   UrlParams,
 } from './leaderboard.interface';
 import { CollectorService } from '../collector/collector.service';
@@ -30,11 +31,11 @@ export class LeaderboardService {
     this.config = this.configService.get<Record<string, any>>('leaderboard');
   }
 
-  getAllLeaderboard() {
+  public getAllLeaderboard() {
     return this.config.leaderboardList;
   }
 
-  getPage(category: LeaderboardCategories, params: UrlParams) {
+  public getPage(category: LeaderboardCategories, params: UrlParams) {
     const url = this.buildUrl(category, params);
     const html = this.collector.fetchHtmlContent(url);
 
@@ -118,99 +119,81 @@ export class LeaderboardService {
     return true;
   }
 
-  getPointPerPage(params: PointParams) {
+  public getPointPerPage(params: PointParams) {
     return this.getPage('points', params);
   }
 
-  getTimingPerPage(params: TimingParams) {
+  public getTimingPerPage(params: TimingParams) {
     return this.getPage('timing', params);
   }
 
-  getAllPoints(currentMonth: number, leaderboard: string) {
+  private processNextPage<T extends any[]>(config: ProcessNextPage<T>) {
+    const { category, entries, observer, params } = config;
+
+    const htmlObservable = this.getPage(category, {
+      ...params,
+      page: config.currentPage,
+    }) as Observable<T>;
+
+    htmlObservable
+      .pipe(
+        concatMap((data) => {
+          if (data.length > 0) {
+            entries.push(...data);
+            config.currentPage++;
+            return scheduled(data, asyncScheduler);
+          } else {
+            config.isNotEmpty = false;
+            return EMPTY;
+          }
+        }),
+      )
+      .subscribe({
+        complete: () => {
+          if (config.isNotEmpty) {
+            this.processNextPage(config);
+          } else {
+            observer.next(entries);
+            observer.complete();
+          }
+        },
+        error: (err) => observer.error(err),
+      });
+  }
+
+  public getAllPoints(params: PointParams) {
+    let entries = [];
     let currentPage = 0;
     let isNotEmpty = true;
 
     return new Observable<PointEntries>((observer) => {
-      const pointEntries: PointEntries = [];
-      const processNextPage = () => {
-        const htmlObservable = this.getPage('points', {
-          currentMonth,
-          leaderboard,
-          page: currentPage,
-        });
-
-        htmlObservable
-          .pipe(
-            concatMap((data: PointEntries) => {
-              if (data.length > 0) {
-                pointEntries.push(...data);
-                currentPage++;
-                return scheduled(data, asyncScheduler);
-              } else {
-                isNotEmpty = false;
-                return EMPTY;
-              }
-            }),
-          )
-          .subscribe({
-            complete: () => {
-              if (isNotEmpty) {
-                processNextPage();
-              } else {
-                observer.next(pointEntries);
-                observer.complete();
-              }
-            },
-            error: (err) => observer.error(err),
-          });
-      };
-
-      processNextPage();
+      this.processNextPage<PointEntries>({
+        currentMonth: params.currentMonth,
+        params,
+        category: 'points',
+        entries,
+        isNotEmpty,
+        observer,
+        currentPage,
+      });
     });
   }
 
-  getAllTiming(params: TimingParamsWithoutPage) {
+  public getAllTiming(params: Omit<TimingParams, 'page'>) {
+    let entries = [];
     let currentPage = 0;
     let isNotEmpty = true;
 
     return new Observable<TimingEntries>((observer) => {
-      const timingEntries: TimingEntries = [];
-      const processNextPage = () => {
-        const htmlObservable = this.getPage('timing', {
-          currentMonth: params.currentMonth,
-          leaderboard: params.leaderboard,
-          track: params.track,
-          stage: params.stage,
-          page: currentPage,
-        });
-
-        htmlObservable
-          .pipe(
-            concatMap((data: TimingEntries) => {
-              if (data.length > 0) {
-                timingEntries.push(...data);
-                currentPage++;
-                return scheduled(data, asyncScheduler);
-              } else {
-                isNotEmpty = false;
-                return EMPTY;
-              }
-            }),
-          )
-          .subscribe({
-            complete: () => {
-              if (isNotEmpty) {
-                processNextPage();
-              } else {
-                observer.next(timingEntries);
-                observer.complete();
-              }
-            },
-            error: (err) => observer.error(err),
-          });
-      };
-
-      processNextPage();
+      this.processNextPage<TimingEntries>({
+        currentMonth: params.currentMonth,
+        params,
+        category: 'timing',
+        entries,
+        isNotEmpty,
+        observer,
+        currentPage,
+      });
     });
   }
 }

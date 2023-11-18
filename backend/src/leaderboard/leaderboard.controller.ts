@@ -7,12 +7,12 @@ export class LeaderboardController {
   constructor(private leaderboardService: LeaderboardService) {}
 
   @Get()
-  getAllLeaderboard(@Res() res: Response) {
+  public getAllLeaderboard(@Res() res: Response) {
     return res.status(200).json(this.leaderboardService.getAllLeaderboard());
   }
 
   @Get('timing/:leaderboard')
-  getLeaderboardTracks(
+  public getLeaderboardTracks(
     @Param('leaderboard') leaderboard: string,
     @Res() res: Response,
   ) {
@@ -32,7 +32,7 @@ export class LeaderboardController {
   }
 
   @Get('points/:leaderboard')
-  async getAllPoints(
+  public async getAllPoints(
     @Param('leaderboard') leaderboard: string,
     @Res() res: Response,
     @Query('currentMonth') currentMonth = 0,
@@ -50,18 +50,20 @@ export class LeaderboardController {
       leaderboard = '';
     }
 
-    this.leaderboardService.getAllPoints(currentMonth, leaderboard).subscribe({
-      next(data) {
-        return res.status(200).json(data);
-      },
-      error(error) {
-        return res.status(500).json({ error });
-      },
-    });
+    this.leaderboardService
+      .getAllPoints({ currentMonth, leaderboard })
+      .subscribe({
+        next(data) {
+          return res.status(200).json(data);
+        },
+        error(error) {
+          return res.status(500).json({ error });
+        },
+      });
   }
 
   @Get('timing/:leaderboard/:track')
-  async getAllTiming(
+  public async getAllTiming(
     @Param() params: { leaderboard: string; page: number; track: string },
     @Query()
     query: { currentMonth: number; stage: string; car: string },
@@ -85,6 +87,7 @@ export class LeaderboardController {
       })
       .subscribe({
         next(data) {
+          console.log('data', data);
           return res.status(200).json(data);
         },
         error(error) {
@@ -94,7 +97,7 @@ export class LeaderboardController {
   }
 
   @Get('points/:leaderboard/:page')
-  async getPointPerPage(
+  public async getPointPerPage(
     @Param() params: { leaderboard: string; page: number },
     @Query('currentMonth') currentMonth = 0,
     @Res() res: Response,
@@ -127,7 +130,7 @@ export class LeaderboardController {
   }
 
   @Get('timing/:leaderboard/:track/:page')
-  async getTimingPerPage(
+  public async getTimingPerPage(
     @Param() params: { leaderboard: string; page: number; track: string },
     @Query()
     query: { currentMonth: number; stage: string; car: string },
