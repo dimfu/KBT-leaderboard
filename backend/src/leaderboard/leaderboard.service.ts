@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   LeaderboardCategories,
   LeaderboardConfig,
@@ -21,6 +21,8 @@ import {
 } from 'rxjs';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 @Injectable()
 export class LeaderboardService {
@@ -28,6 +30,7 @@ export class LeaderboardService {
   constructor(
     private readonly collector: CollectorService,
     private configService: ConfigService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {
     this.config = this.configService.get<LeaderboardConfig>('leaderboard');
   }
@@ -51,6 +54,10 @@ export class LeaderboardService {
   public getPage(category: LeaderboardCategories, params: UrlParams) {
     const url = this.buildUrl(category, params);
     const html = this.collector.fetchHtmlContent(url);
+
+    this.logger.info(
+      `[${category}] Extracting data from page ${Number(params.page) + 1}`,
+    );
 
     return html.pipe(
       map((html: string) => {
@@ -182,6 +189,7 @@ export class LeaderboardService {
           } else {
             observer.next(entries);
             observer.complete();
+            this.logger.info(`[${category}] Found ${entries.length} entries`);
           }
         },
         error: (err) => observer.error(err),
