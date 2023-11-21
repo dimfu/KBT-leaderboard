@@ -2,6 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   LeaderboardCategories,
+  LeaderboardConfig,
   PointEntries,
   PointParams,
   ProcessNextPage,
@@ -23,16 +24,28 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class LeaderboardService {
-  private config: Record<string, any>;
+  private config: LeaderboardConfig;
   constructor(
     private readonly collector: CollectorService,
     private configService: ConfigService,
   ) {
-    this.config = this.configService.get<Record<string, any>>('leaderboard');
+    this.config = this.configService.get<LeaderboardConfig>('leaderboard');
   }
 
   public getAllLeaderboard() {
     return this.config.leaderboardList;
+  }
+
+  public getAllTracks(leaderboard: string) {
+    const filteredRegions = this.config.timingTracks.filter(
+      ({ region }) => region === leaderboard,
+    );
+
+    const tracks = filteredRegions.flatMap((region) =>
+      region.tracks.map(({ track }) => track),
+    );
+
+    return tracks;
   }
 
   public getPage(category: LeaderboardCategories, params: UrlParams) {
@@ -116,6 +129,20 @@ export class LeaderboardService {
       });
       return false;
     }
+    return true;
+  }
+
+  public isTrackExist(leaderboard: string, track: string, res: Response) {
+    const tracks = this.getAllTracks(leaderboard);
+
+    if (!tracks.includes(track)) {
+      res.status(404).json({
+        error:
+          'Track not found, see /leaderboard/timing/{leaderboard} to see track list',
+      });
+      return false;
+    }
+
     return true;
   }
 

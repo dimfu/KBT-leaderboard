@@ -12,6 +12,30 @@ export class LeaderboardController {
   }
 
   @Get('timing/:leaderboard')
+  public getAllTracks(
+    @Param('leaderboard') leaderboard: string,
+    @Res() res: Response,
+  ) {
+    leaderboard = this.leaderboardService.capitalizeLeaderboard(
+      leaderboard.toLowerCase(),
+    );
+
+    if (!this.leaderboardService.isLeaderboardExist(leaderboard, res)) {
+      return;
+    }
+
+    if (leaderboard === 'All') {
+      return res
+        .status(404)
+        .json({ error: 'leaderboard `all` cant be used in timing' });
+    }
+
+    return res
+      .status(200)
+      .json(this.leaderboardService.getAllTracks(leaderboard));
+  }
+
+  @Get('timing/:leaderboard')
   public getLeaderboardTracks(
     @Param('leaderboard') leaderboard: string,
     @Res() res: Response,
@@ -73,9 +97,17 @@ export class LeaderboardController {
       params.leaderboard.toLowerCase(),
     );
 
-    if (!this.leaderboardService.isLeaderboardExist(params.leaderboard, res)) {
+    if (!this.leaderboardService.isLeaderboardExist(params.leaderboard, res))
       return;
-    }
+
+    if (
+      !this.leaderboardService.isTrackExist(
+        params.leaderboard,
+        params.track,
+        res,
+      )
+    )
+      return;
 
     this.leaderboardService
       .getAllTiming({
@@ -87,7 +119,6 @@ export class LeaderboardController {
       })
       .subscribe({
         next(data) {
-          console.log('data', data);
           return res.status(200).json(data);
         },
         error(error) {
@@ -108,9 +139,7 @@ export class LeaderboardController {
       leaderboard.toLowerCase(),
     );
 
-    if (!this.leaderboardService.isLeaderboardExist(leaderboard, res)) {
-      return;
-    }
+    if (!this.leaderboardService.isLeaderboardExist(leaderboard, res)) return;
 
     if (leaderboard === 'All') {
       leaderboard = '';
@@ -146,13 +175,14 @@ export class LeaderboardController {
       leaderboard.toLowerCase(),
     );
 
-    if (!this.leaderboardService.isLeaderboardExist(leaderboard, res)) {
-      return;
-    }
+    if (!this.leaderboardService.isLeaderboardExist(leaderboard, res)) return;
 
     if (leaderboard === 'All') {
       leaderboard = '';
     }
+
+    if (!this.leaderboardService.isTrackExist(leaderboard, params.track, res))
+      return;
 
     this.leaderboardService
       .getTimingPerPage({

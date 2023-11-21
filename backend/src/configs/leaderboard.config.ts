@@ -1,8 +1,9 @@
 import { registerAs } from '@nestjs/config';
+import { LeaderboardConfig } from '../leaderboard/leaderboard.interface';
 
 export default registerAs(
   'leaderboard',
-  (): Record<string, any> => ({
+  (): LeaderboardConfig => ({
     pointsUrl: `${process.env.TU_URL}/timing/points?page={page}&month={month}&leaderboard={leaderboard}`,
     timingUrl: `${process.env.TU_URL}/timing?leaderboard={leaderboard}&track={track}&car={car}&month={month}&stage={stage}&page={page}`,
     leaderboardList: [
@@ -16,13 +17,17 @@ export default registerAs(
     ],
     timingTracks: [
       {
-        Gunma: [
+        region: 'Gunma',
+        tracks: [
           { track: 'pk_akina', stage: ['Akina Downhill', 'Akina Uphill'] },
           { track: 'ek_akagi', stage: ['Akagi Downhill', 'Akagi Uphill'] },
           { track: 'ek_myogi', stage: ['Myogi Downhill', 'Myogi Uphill'] },
           { track: 'pk_usui_pass', stage: ['Usui Downhill', 'Usui Uphill'] },
         ],
-        Ibaraki: [
+      },
+      {
+        region: 'Ibaraki',
+        tracks: [
           {
             track: 'ek_tsukuba_fruits_line',
             stage: ['Tsukuba Inbound', 'Tsukuba Outbound'],
@@ -32,7 +37,10 @@ export default registerAs(
             stage: ['Snow Tsukuba Inbound', 'Snow Tsukuba Outbound'],
           },
         ],
-        Kanagawa: [
+      },
+      {
+        region: 'Kanagawa',
+        tracks: [
           {
             track: 'ek_tsubaki_line',
             stage: ['Tsubaki Downhill', 'Tsubaki Uphill'],
@@ -46,41 +54,37 @@ export default registerAs(
             stage: ['Turnpike Downhill', 'Turnpike Uphill'],
           },
         ],
-        Saitama: [
+      },
+      {
+        region: 'Saitama',
+        tracks: [
           {
             track: 'ek_tsuchisaka',
             stage: ['Tsuchisaka Inbound', 'Tsuchisaka Outbound'],
           },
-          {
-            track: 'rtp_maze_pass',
-            stage: ['Maze Downhill', 'Maze Uphill'],
-          },
+          { track: 'rtp_maze_pass', stage: ['Maze Downhill', 'Maze Uphill'] },
           {
             track: 'ek_sadamine',
             stage: ['Sadamine Uphill', 'Sadamine Downhill'],
           },
-          {
-            // fav touge ever!! if u disagree fuck you
-            track: 'shomaru',
-            stage: ['Shomaru Outbound', 'Shomaru Inbound'],
-          },
+          { track: 'shomaru', stage: ['Shomaru Outbound', 'Shomaru Inbound'] },
         ],
-        Shizuoka: [
+      },
+      {
+        region: 'Shizuoka',
+        tracks: [
           { track: 'ek_nagao', stage: ['Nagao Downhill', 'Nagao Uphill'] },
         ],
-        Tochigi: [
+      },
+      {
+        region: 'Tochigi',
+        tracks: [
           {
             track: 'ek_happogahara',
             stage: ['Happogahara Inbound', 'Happogahara Outbound'],
           },
-          {
-            track: 'ek_momiji',
-            stage: ['Momiji Downhill', 'Momiji Uphill'],
-          },
-          {
-            track: 'ek_irohazaka',
-            stage: ['Irohazaka Downhill'],
-          },
+          { track: 'ek_momiji', stage: ['Momiji Downhill', 'Momiji Uphill'] },
+          { track: 'ek_irohazaka', stage: ['Irohazaka Downhill'] },
           {
             track: 'rbms_enna',
             stage: ['Enna Skyline Downhill', 'Enna Skyline Uphill'],

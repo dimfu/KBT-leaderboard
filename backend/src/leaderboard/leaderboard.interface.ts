@@ -43,3 +43,16 @@ export interface ProcessNextPage<T extends any[]> {
   observer: Subscriber<T>;
   currentPage: number;
 }
+
+export interface LeaderboardConfig {
+  pointsUrl: string;
+  timingUrl: string;
+  leaderboardList: string[];
+  timingTracks: {
+    region: string;
+    tracks: {
+      track: string;
+      stage: string[];
+    }[];
+  }[];
+}
