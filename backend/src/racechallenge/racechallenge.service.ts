@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CollectorService } from '../collector/collector.service';
 import {
   EMPTY,
@@ -10,10 +10,15 @@ import {
 } from 'rxjs';
 import { RaceChallengeEntries } from './racechallenge.interface';
 import { Response } from 'express';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 @Injectable()
 export class RaceChallengeService {
-  constructor(private readonly collector: CollectorService) {}
+  constructor(
+    private readonly collector: CollectorService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   private readonly challengeUrl = `${process.env.TU_URL}/racechallenge?leaderboard={leaderboard}&page={page}`;
   private leaderboardList = {
@@ -59,6 +64,10 @@ export class RaceChallengeService {
       .replace(/{page}/g, page.toString());
     const html = this.collector.fetchHtmlContent(url);
 
+    this.logger.info(
+      `[racechallenge] Extracting data from page ${Number(page) + 1}`,
+    );
+
     return html.pipe(
       map((html: string) => this.collector.extractRaceChallengeTable(html)),
     );
@@ -96,6 +105,9 @@ export class RaceChallengeService {
               } else {
                 observer.next(raceEntries);
                 observer.complete();
+                this.logger.info(
+                  `[racechallenge] Found ${raceEntries.length} entries`,
+                );
               }
             },
             error: (err) => observer.error(err),
