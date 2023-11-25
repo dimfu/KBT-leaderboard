@@ -1,4 +1,4 @@
-type ProcessCallback = (url: string, json: string[]) => any
+type ProcessCallback = (url: string, json: any[]) => any
 
 export default async function fetchAll(urls: string[], callback: ProcessCallback) {
   const promises = urls.map((url) => fetch(url).then(async (res) => {

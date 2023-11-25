@@ -1,6 +1,6 @@
 import { Env } from "./types";
 import router from "./router";
-import getTimingRecords from "../app/timing";
+import getTimingRecords from "./app/timing";
 
 export default {
 	async fetch(request: Request) {
@@ -8,8 +8,10 @@ export default {
 	},
 	async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
 		switch (event.cron) {
-			case "*/2 * * * *":
-				await getTimingRecords(env)
+			case "*/10 * * * *":
+				await getTimingRecords(env, {
+					include: { Gunma: ['pk_akina', 'ek_akagi'] }
+				})
 				break;
 		}
 	},

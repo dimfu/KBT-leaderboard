@@ -47,6 +47,4 @@ export const leaderboards = [
       "rbms_enna"
     ]
   }
-]
-
-export const leaderboardOnlyName = leaderboards.map((leaderboard) => leaderboard.name)
+] as const

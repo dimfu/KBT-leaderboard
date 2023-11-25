@@ -1,5 +1,4 @@
-import { Env } from "../src/types"
-import { leaderboards } from "../src/constants"
+import { Env, LeaderboardConfig, LeaderboardName } from "../types"
 import fetchAll from "./fetchAll"
 
 function combineTrackWithData(url: string, data: string[]) {
@@ -9,13 +8,21 @@ function combineTrackWithData(url: string, data: string[]) {
   return { track, data }
 }
 
-export default async function getTimingRecords(env: Env) {
-  let builtUrls: string[] = []
+export default async function getTimingRecords(
+  env: Env,
+  config: LeaderboardConfig<LeaderboardName[]>
+) {
   const url = env.BACKEND_URL
+  let builtUrls: string[] = []
+  let leaderboards = []
 
-  leaderboards.slice(0, 1).forEach(({ name, tracks }) => {
+  for (const [name, tracks] of Object.entries(config.include)) {
+    leaderboards.push({ name, tracks })
+  }
+
+  leaderboards.forEach(({ name, tracks }) => {
     const pointUrl = `${url}/leaderboard/timing/${name}`
-    tracks.slice(0, 1).forEach(track => {
+    tracks.forEach(track => {
       builtUrls.push(`${pointUrl}/${track}`)
     });
   });
