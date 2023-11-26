@@ -27,7 +27,7 @@ func NewBot(token, channelId string) (*Bot, error) {
 	return &Bot{discord, channelId}, nil
 }
 
-func (bot *Bot) sendMessage(message string) error {
+func (bot *Bot) sendNotification(message string) error {
 	_, err := bot.discord.ChannelMessageSend(bot.channelId, message)
 
 	if err != nil {
