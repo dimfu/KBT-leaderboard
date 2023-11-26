@@ -9,6 +9,7 @@
 *.so
 *.dylib
 
+bot
 
 worker/wrangler.toml
 
