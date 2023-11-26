@@ -1,8 +1,29 @@
 import { leaderboards } from "./constants";
 
 export interface Env {
+	channelIds: string[]
 	TOUGE_UNION: KVNamespace;
+	WEBHOOK_URL: string
 	BACKEND_URL: string
+}
+
+export interface Point {
+	rank: number;
+	name: string;
+	points: number;
+}
+export type PointEntries = Point[];
+export interface Timing {
+	rank: number;
+	date: string;
+	name: string;
+	car: string;
+	time: string;
+}
+export type TimingEntries = Timing[];
+export type TimingStorage = {
+	now: TimingEntries
+	before: TimingEntries
 }
 
 export type LeaderboardName = typeof leaderboards[number]["name"]
