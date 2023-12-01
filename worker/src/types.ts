@@ -32,6 +32,7 @@ export type LeaderboardConfig<T extends LeaderboardName[]> = {
 		[K in T[number]]?: Extract<typeof leaderboards[number], { name: K }>['tracks'][number][]
 	}
 }
+export type TrackNames = typeof leaderboards[number]['tracks'][number]
 
 export interface RankDiff {
   before: TimingEntries

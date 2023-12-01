@@ -1,7 +1,7 @@
-import { IndividualRank, RankDiff } from "../../types";
+import { IndividualRank, RankDiff, TrackNames } from "../../types";
 
-function leaderHaveChanged(rankings: IndividualRank[]) {
-  return rankings[0].before !== rankings[0].after
+function leaderHaveChanged(leader: IndividualRank) {
+  return leader.before !== leader.after
 }
 
 function rankDiff({ before, after }: RankDiff) {
@@ -36,4 +36,15 @@ function rankDiff({ before, after }: RankDiff) {
   return result;
 }
 
-export { rankDiff, leaderHaveChanged }
+function handleRankDiff(rankings: RankDiff, track: TrackNames) {
+  const diffedRankings = rankDiff({ before: rankings.before, after: rankings.after })
+  const currentLeader = diffedRankings[0]
+  
+  if (leaderHaveChanged(currentLeader)) {
+    return `${currentLeader.name} is the current leader on ${track}`
+  }
+
+  return undefined
+}
+
+export { rankDiff, leaderHaveChanged, handleRankDiff }

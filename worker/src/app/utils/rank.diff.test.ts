@@ -16,12 +16,12 @@ describe('leaderboard rankings', () => {
   })
 
   test('should return false when leader is still first', () => {
-    const result: IndividualRank[] = [{ name: 'john doe', before: 1, after: 1 }]
+    const result: IndividualRank = { name: 'john doe', before: 1, after: 1 }
     expect(leaderHaveChanged(result)).toBeFalsy()
   })
 
   test('should return true when leader is taken over', () => {
-    const result: IndividualRank[] = [{ name: 'john doe', before: 1, after: 2 }]
+    const result: IndividualRank = { name: 'john doe', before: 1, after: 2 }
     expect(leaderHaveChanged(result)).toBeTruthy()
   })
 })
