@@ -32,3 +32,14 @@ export type LeaderboardConfig<T extends LeaderboardName[]> = {
 		[K in T[number]]?: Extract<typeof leaderboards[number], { name: K }>['tracks'][number][]
 	}
 }
+
+export interface RankDiff {
+  before: TimingEntries
+  after: TimingEntries
+}
+
+export interface IndividualRank {
+	name: string
+	before: number
+	after?: number
+}
