@@ -7,7 +7,6 @@ function combineTrackWithData(url: string, data: TimingEntries) {
   const matchTrack = url.match(/\/([^/]+)\/?$/)  
   // we are 100% sure this wont be undefined (surely it wont break!)
   const track = matchTrack![1] as TrackNames
-
   return { track, data }
 }
 
@@ -33,7 +32,7 @@ async function updateDataAndNotify(
     }
     await TOUGE_UNION.put(track, JSON.stringify(rankings))
   }
-  
+
   const message = handleRankDiff(rankings, track)
   await sendNotification(WEBHOOK_URL, message)
 }
@@ -42,7 +41,6 @@ export default async function getTimingRecords(
   env: Env,
   config: LeaderboardConfig<LeaderboardName[]>
 ) {
-  const { BACKEND_URL, TOUGE_UNION } = env
   let builtUrls: string[] = []
   let leaderboards = []
 
@@ -51,7 +49,7 @@ export default async function getTimingRecords(
   }
 
   leaderboards.forEach(({ name, tracks }) => {
-    const pointUrl = `${BACKEND_URL}/leaderboard/timing/${name}`
+    const pointUrl = `${env.BACKEND_URL}/leaderboard/timing/${name}`
     tracks.forEach(track => {
       builtUrls.push(`${pointUrl}/${track}`)
     });
