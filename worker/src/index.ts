@@ -8,9 +8,9 @@ export default {
 	},
 	async scheduled(event: ScheduledEvent, env: Env): Promise<void> {
 		switch (event.cron) {
-			case "*/10 * * * *":
+			case '*/10 * * * *':
 				await getTimingRecords(env, {
-					include: { Gunma: ['pk_akina', 'ek_akagi'] }
+					include: { Gunma: ['pk_akina', 'ek_akagi', 'pk_usui_pass'] }
 				})
 				break;
 		}

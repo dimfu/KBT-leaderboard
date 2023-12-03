@@ -11,26 +11,26 @@ function rankDiff({ before, after }: RankDiff) {
   let result: IndividualRank[] = [];
   const uniqueEntries = new Map<string, IndividualRank>()
 
-  before.forEach(({ name, car, rank }) => {
-    const key = `${name}-${car}`
+  before.forEach((entry) => {
+    const key = `${entry.name}-${entry.car}`
     uniqueEntries.set(key, {
-      name,
-      before: rank
+      ...entry,
+      before: entry.rank
     })
   })
 
-  after.forEach(({ name, car, rank }) => {
-    const key = `${name}-${car}`
+  after.forEach((entry) => {
+    const key = `${entry.name}-${entry.car}`
     const existingEntry = uniqueEntries.get(key)
 
     if (existingEntry) {
-      existingEntry.after = rank
+      existingEntry.after = entry.rank
       uniqueEntries.set(key, existingEntry)
     } else {
       uniqueEntries.set(key, {
-        name,
-        after: rank,
-        before: rank
+        ...entry,
+        after: entry.rank,
+        before: entry.rank
       })
     }
   });
@@ -45,7 +45,7 @@ function handleRankDiff(rankings: RankDiff, track: TrackNames) {
   const isNewKey = rankings.before.length === 0
   
   if (leaderHaveChanged(currentLeader, isNewKey)) {
-    return `${currentLeader.name} is the current leader on ${track}`
+    return `${currentLeader.name} is the current leader on ${track} with a time of ${currentLeader.time}`
   }
 
   return undefined
