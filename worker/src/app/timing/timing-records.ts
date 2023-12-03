@@ -1,7 +1,7 @@
-import { Env, LeaderboardConfig, LeaderboardName, RankDiff, TimingEntries, TimingStorage, TrackNames } from "../types"
-import sendNotification from "./discord/webhook"
-import fetchAll from "./fetchAll"
-import { handleRankDiff } from "./utils/rank-diff"
+import { Env, LeaderboardConfig, LeaderboardName, RankDiff, TimingEntries, TimingStorage, TrackNames } from "../../types"
+import sendNotification from "../discord/webhook"
+import fetchAll from "../fetchAll"
+import { handleRankDiff } from "../utils/rank-diff"
 
 function combineTrackWithData(url: string, data: TimingEntries) {
   const matchTrack = url.match(/\/([^/]+)\/?$/)  
