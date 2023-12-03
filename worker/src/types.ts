@@ -22,7 +22,7 @@ export interface Timing {
 }
 export type TimingEntries = Timing[];
 export type TimingStorage = {
-	now: TimingEntries
+	after: TimingEntries
 	before: TimingEntries
 }
 

@@ -27,7 +27,7 @@ async function updateDataAndNotify(
   } else {
     const parsedIncomingData: TimingStorage = JSON.parse(currentTrackData)
     rankings = {
-      before: currentTrackData ? parsedIncomingData.now : [],
+      before: currentTrackData ? parsedIncomingData.after : [],
       after: data
     }
     await TOUGE_UNION.put(track, JSON.stringify(rankings))
