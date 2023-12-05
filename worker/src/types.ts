@@ -39,7 +39,7 @@ export interface RankDiff {
   after: TimingEntries
 }
 
-export interface IndividualRank extends Partial<Timing> {
+export interface IndividualRank extends Timing {
 	before: number
 	after?: number
 }

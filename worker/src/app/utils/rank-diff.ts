@@ -8,7 +8,6 @@ function leaderHaveChanged(leader: IndividualRank, isNewData: boolean) {
 }
 
 function rankDiff({ before, after }: RankDiff) {
-  let result: IndividualRank[] = [];
   const uniqueEntries = new Map<string, IndividualRank>()
 
   before.forEach((entry) => {
@@ -24,6 +23,7 @@ function rankDiff({ before, after }: RankDiff) {
     const existingEntry = uniqueEntries.get(key)
 
     if (existingEntry) {
+      existingEntry.rank = entry.rank
       existingEntry.after = entry.rank
       uniqueEntries.set(key, existingEntry)
     } else {
@@ -35,8 +35,8 @@ function rankDiff({ before, after }: RankDiff) {
     }
   });
 
-  result = Array.from(uniqueEntries.values())
-  return result;
+  const diffedRankings = Array.from(uniqueEntries.values())
+  return diffedRankings.sort((a, b) => a.rank - b.rank)
 }
 
 function handleRankDiff(rankings: RankDiff, track: TrackNames) {
