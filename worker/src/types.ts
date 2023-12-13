@@ -1,3 +1,4 @@
+import { CAR_NAME_MAPPINGS } from "./app/utils/name_mappings";
 import { leaderboards } from "./constants";
 
 export interface Env {
@@ -43,3 +44,5 @@ export interface IndividualRank extends Timing {
 	before: number
 	after?: number
 }
+
+export type CarName = keyof typeof CAR_NAME_MAPPINGS

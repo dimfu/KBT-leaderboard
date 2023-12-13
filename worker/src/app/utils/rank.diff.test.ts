@@ -7,7 +7,6 @@ const after = [{ "rank": 1, "date": "2023/10/07 02:19", "name": "Sniperin", "car
 describe('leaderboard rankings', () => {
   test('should show rank before and after', () => {
     const result = rankDiff({ before, after })
-    console.log(result)
     expect(result).toEqual([
       expect.objectContaining({ name: 'Sniperin', before: 2, after: 1 }),
       expect.objectContaining({ name: 'PM ~ DraKKar', before: 1, after: 2 }),
@@ -38,7 +37,7 @@ describe('leaderboard rankings', () => {
   })
   test('should return message when leader changed', () => {
     const result = handleRankDiff({ before, after }, 'ek_akagi')
-    expect(result).toBe('Sniperin is the current leader on ek_akagi with a time of 03:23.251')
+    expect(result).toBe('Sniperin is the current leader on ek_akagi with a time of 03:23.251 (Mitsubishi Evo 6 TME)')
   })
 
   test('should return undefined when leader remain', () => {

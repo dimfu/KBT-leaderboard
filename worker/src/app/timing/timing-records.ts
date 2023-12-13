@@ -4,7 +4,7 @@ import fetchAll from "../fetchAll"
 import { handleRankDiff } from "../utils/rank-diff"
 
 function combineTrackWithData(url: string, data: TimingEntries) {
-  const matchTrack = url.match(/\/([^/]+)\/?$/)  
+  const matchTrack = url.match(/\/([^/]+)\/?$/)
   // we are 100% sure this wont be undefined (surely it wont break!)
   const track = matchTrack![1] as TrackNames
   return { track, data }
